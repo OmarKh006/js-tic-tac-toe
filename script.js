@@ -24,7 +24,81 @@ const resetBoard = () => {
   turnsCounter = 0;
 };
 
-const checkWin = () => true;
+const checkRows = (currentPlayer) => {
+  let column = 0;
+
+  for (let row = 0; row < NUMBER_OF_ROWS; row++) {
+    while (column < NUMBER_OF_ROWS) {
+      if (board[row][column] !== currentPlayer) {
+        column = 0;
+        break;
+      }
+      column++;
+    }
+    if (column === NUMBER_OF_ROWS) return true;
+  }
+};
+
+const checkColumns = (currentPlayer) => {
+  let row = 0;
+
+  for (let column = 0; column < NUMBER_OF_ROWS; column++) {
+    while (row < NUMBER_OF_ROWS) {
+      if (board[row][column] !== currentPlayer) {
+        row = 0;
+        break;
+      }
+      row++;
+    }
+    if (row === NUMBER_OF_ROWS) return true;
+  }
+};
+
+const checkMainDiagonals = (currentPlayer) => {
+  let count = 0;
+
+  while (count < NUMBER_OF_ROWS) {
+    if (board[count][count] !== currentPlayer) {
+      count = 0;
+      break;
+    }
+    count++;
+  }
+  if (count === NUMBER_OF_ROWS) return true;
+};
+
+const checkReverseDiagonals = (currentPlayer) => {
+  let count = 0;
+
+  while (count < NUMBER_OF_ROWS) {
+    if (board[count][NUMBER_OF_ROWS - 1 - count] !== currentPlayer) {
+      count = 0;
+      break;
+    }
+    count++;
+  }
+  if (count === NUMBER_OF_ROWS) return true;
+};
+
+const checkWin = (currentPlayer) => {
+  return (
+    checkRows(currentPlayer) ||
+    checkColumns(currentPlayer) ||
+    checkMainDiagonals(currentPlayer) ||
+    checkReverseDiagonals(currentPlayer)
+  );
+  /*
+  if (checkRows(currentPlayer)) return true;
+
+  if (checkColumns(currentPlayer)) return true;
+
+  if (checkMainDiagonals(currentPlayer)) return true;
+
+  if (checkReverseDiagonals(currentPlayer)) return true;
+  
+  return false;
+  */
+};
 
 const runWinEvent = (currentPlayer) => {
   setTimeout(() => {
@@ -61,7 +135,7 @@ const cellClickHandler = (event, index) => {
     board[row][col] = currentPlayer;
     drawMarkInCell(cell, currentPlayer);
 
-    if (checkWin()) {
+    if (checkWin(currentPlayer)) {
       runWinEvent(currentPlayer);
     } else {
       turnsCounter === turns && runDrawEvent();
